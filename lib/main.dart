@@ -1,65 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:whatsapp_clone/screens/chat_screen.dart';
 
 void main() {
   runApp(const WhatsappClone());
 }
-
-var data = [
-  {
-    'name': 'John Doe',
-    'message': 'Hello, How are you?',
-    'time': '10:00 AM',
-    'image': 'https://i.pravatar.cc/300',
-  },
-  {
-    'name': 'Jane Doe',
-    'message': 'Hello, How are you?',
-    'time': '10:00 AM',
-    'image': 'https://i.pravatar.cc/300',
-  },
-  {
-    'name': 'John Doe',
-    'message': 'Hello, How are you?',
-    'time': '10:00 AM',
-    'image': 'https://i.pravatar.cc/300',
-  },
-  {
-    'name': 'Jane Doe',
-    'message': 'Hello, How are you?',
-    'time': '10:00 AM',
-    'image': 'https://i.pravatar.cc/300',
-  },
-  {
-    'name': 'John Doe',
-    'message': 'Hello, How are you?',
-    'time': '10:00 AM',
-    'image': 'https://i.pravatar.cc/300',
-  },
-  {
-    'name': 'Jane Doe',
-    'message': 'Hello, How are you?',
-    'time': '10:00 AM',
-    'image': 'https://i.pravatar.cc/300',
-  },
-  {
-    'name': 'John Doe',
-    'message': 'Hello, How are you?',
-    'time': '10:00 AM',
-    'image': 'https://i.pravatar.cc/300',
-  },
-  {
-    'name': 'Jane Doe',
-    'message': 'Hello, How are you?',
-    'time': '10:00 AM',
-    'image': 'https://i.pravatar.cc/300',
-  },
-  {
-    'name': 'John Doe',
-    'message': 'Hello, How are you?',
-    'time': '10:00 AM',
-    'image': 'https://i.pravatar.cc/300',
-  },
-];
 
 class WhatsappClone extends StatefulWidget {
   const WhatsappClone({super.key});
@@ -68,15 +12,57 @@ class WhatsappClone extends StatefulWidget {
   State<WhatsappClone> createState() => _WhatsappCloneState();
 }
 
-class _WhatsappCloneState extends State<WhatsappClone> {
+class _WhatsappCloneState extends State<WhatsappClone>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  int _currentIndex = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController =
+        TabController(length: 4, vsync: this, initialIndex: _currentIndex);
+    _tabController.addListener(_handleTabChange);
+  }
+
+  @override
+  void dispose() {
+    _tabController.removeListener(_handleTabChange);
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  void _handleTabChange() {
+    setState(() {
+      _currentIndex = _tabController.index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    var initialIndex = 1;
+    IconData icon;
+
+    switch (_currentIndex) {
+      case 0:
+        icon = Icons.camera_alt;
+        break;
+      case 1:
+        icon = Icons.message;
+        break;
+      case 2:
+        icon = Icons.camera_alt;
+        break;
+      case 3:
+        icon = Icons.add_call;
+        break;
+      default:
+        icon = Icons.message;
+    }
 
     return MaterialApp(
       theme: ThemeData(primarySwatch: Colors.green, fontFamily: 'PTSans'),
       home: DefaultTabController(
-        initialIndex: initialIndex,
+        initialIndex: _currentIndex,
         length: 4,
         child: Scaffold(
           appBar: AppBar(
@@ -93,10 +79,11 @@ class _WhatsappCloneState extends State<WhatsappClone> {
                 child: Icon(Icons.more_vert),
               ),
             ],
-            bottom: const TabBar(
+            bottom: TabBar(
+              controller: _tabController, // Add the TabController here
               indicatorColor: Colors.white,
               labelColor: Colors.white,
-              tabs: [
+              tabs: const [
                 Tab(icon: Icon(Icons.camera_alt)),
                 Tab(text: 'CHATS'),
                 Tab(text: 'STATUS'),
@@ -107,10 +94,11 @@ class _WhatsappCloneState extends State<WhatsappClone> {
           floatingActionButton: FloatingActionButton(
             onPressed: () {},
             backgroundColor: const Color(0xFF04AD9C),
-            child: const Icon(Icons.message),
+            child: Icon(icon),
           ),
-          body: const TabBarView(
-            children: [
+          body: TabBarView(
+            controller: _tabController, // Add the TabController here
+            children: const [
               Icon(Icons.camera_alt),
               ChatPage(),
               Text('Status'),
@@ -119,110 +107,6 @@ class _WhatsappCloneState extends State<WhatsappClone> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class ChatPage extends StatelessWidget {
-  const ChatPage({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    // create object data contain list of chat
-
-    return Container(
-      color: const Color(0xFF101D25),
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              // create list view to display chat
-              for (var item in data)
-                ChatItem(
-                  image: item['image']!,
-                  name: item['name']!,
-                  time: item['time']!,
-                  message: item['message']!,
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ChatItem extends StatelessWidget {
-  const ChatItem({
-    key,
-    required this.image,
-    required this.name,
-    required this.time,
-    required this.message,
-  }) : super(key: key);
-
-  final String image;
-  final String name;
-  final String time;
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundImage: NetworkImage(image),
-                ),
-                const SizedBox(
-                  width: 20,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      name,
-                      style: const TextStyle(
-                        color: Color(0xFFD4DCDF),
-                        fontSize: 19,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      message,
-                      style: const TextStyle(
-                        color: Color(0xFFD4DCDF),
-                        fontSize: 15,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            Text(
-              time,
-              style: const TextStyle(
-                color: Color(0xFFD4DCDF),
-                fontSize: 15,
-              ),
-            )
-          ],
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-      ],
     );
   }
 }
