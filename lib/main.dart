@@ -60,7 +60,7 @@ class _WhatsappCloneState extends State<WhatsappClone>
     }
 
     return MaterialApp(
-      theme: ThemeData(primarySwatch: Colors.green, fontFamily: 'PTSans'),
+      theme: ThemeData(fontFamily: 'PTSans'),
       home: DefaultTabController(
         initialIndex: _currentIndex,
         length: 4,
